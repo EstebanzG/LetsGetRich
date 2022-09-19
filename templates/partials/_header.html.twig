@@ -1,0 +1,8 @@
+<nav class="navbar navbar-light">
+    <div class="container-fluid d-flex space-between">
+        <span class="navbar-brand mb-0 text-white"><h1>Bonjour, {{ app.user.firstName }}.</h1></span>
+        <a href="{{ path('app_logout') }}">
+            <button class="btn btn-primary">Se déconnecter</button>
+        </a>
+    </div>
+</nav>
