@@ -111,6 +111,35 @@ class Account
         return $this;
     }
 
+    function comparator($object1 , $object2) {
+        return $object1->date > $object2->date;
+    }
+
+
+    public function getExpenses($date = null): array
+    {
+        $budgets = $this->getBudgets();
+        $toReturn = [];
+        foreach ($budgets as $budget) {
+            foreach ($budget->getExpenses() as $expense) {
+                $toReturn[] = $expense;
+            }
+        }
+        if($date != null){
+            $toReturn = array_filter($toReturn,
+                function($expense) use ($date) {
+                    return $expense->getDate()->format('m Y') == $date->format("m Y");
+                });
+        }
+
+        usort($toReturn,
+            function ($a, $b) {
+                return ($b->getDate() > $a->getDate());
+            });
+
+        return $toReturn;
+    }
+
     public function removeBudget(Budget $budget): self
     {
         if ($this->Budgets->removeElement($budget)) {

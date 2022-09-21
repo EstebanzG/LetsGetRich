@@ -1,10 +1,5 @@
-body {
+html, body {
     background: url("../img/background.svg") no-repeat center center fixed;
     background-size: cover;
-}
-
-.overflow-modify{
-    overflow-y: scroll;!important;
-    overflow-x: hidden;!important;
 }
 

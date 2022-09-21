@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Budget;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @extends ServiceEntityRepository<Budget>
@@ -16,9 +17,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BudgetRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
         parent::__construct($registry, Budget::class);
+        $this->security = $security;
     }
 
     public function add(Budget $entity, bool $flush = false): void
@@ -37,6 +41,13 @@ class BudgetRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findAllForConnectedUser(): QueryBuilder
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.user_id = :id')
+            ->setParameter('id',$this->security->getUser()->getId());
     }
 
 //    /**

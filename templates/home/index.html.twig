@@ -7,57 +7,51 @@
         {% include "partials/_header.html.twig" %}
     {% endblock %}
 
-    <div class="container-fluid d-flex justify-content-around h-75">
-        <div class="col-lg-3 h-100">
-            <div class="bg-white rounded-5 h-100 p-3 overflow-scroll overflow-x-hidden">
-                <span class="d-flex justify-content-between align-items-center">
-                    <h3>Vos informations</h3>
-                    <a href="{{ path('app_user') }}"><i class="bi bi-gear"></i></a>
-                </span>
+    <div class="container-fluid h-75 d-flex justify-content-around">
+        <div class="col-lg-3 bg-white rounded-5 h-100 p-3 overflow-scroll overflow-x-hidden shadow-lg">
+            <span class="d-flex justify-content-between align-items-center">
+                <h3>Mes informations</h3>
+                <a href="{{ path('app_user') }}"><i class="bi bi-gear"></i></a>
+            </span>
+            <div>
+                <p>Prénom NOM : {{ app.user.firstName }} {{ app.user.lastName }}</p>
+                <p>Email : {{ app.user.email }}</p>
+                <p>Nombre de compte gérés : {{ accounts|length }}</p>
+            </div>
+            {% if accounts is empty %}
                 <div>
-                    <p>Prénom NOM : {{ app.user.firstName }} {{ app.user.lastName }}</p>
-                    <p>Email : {{ app.user.email }}</p>
-                    <p>Nombre de compte gérés : {{ accounts|length }}</p>
+                    <h3>Vous n'avez pas encore de comptes bancaire</h3>
+                    <a href="{{ path('app_account_add') }}">Ajoutez un compte</a>
                 </div>
-                {% if accounts is empty %}
-                    <div>
-                        <h3>Vous n'avez pas encore de comptes bancaire</h3>
-                        <a href="{{ path('app_account_add') }}">Ajoutez un compte</a>
-                    </div>
-                {% elseif accounts|length > 1 %}
-                    <span class="d-flex justify-content-between align-items-center">
-                        <h3>Vos comptes bancaires</h3>
-                        <a href="{{ path('app_account_add') }}"><i class="bi bi-plus-circle"></i></a>
-                    </span>
-                {% else %}
-                    <span class="d-flex justify-content-between align-items-center">
-                        <h3>Votre compte bancaire</h3>
-                        <a href="{{ path('app_account_add') }}"><i class="bi bi-plus-circle"></i></a>
-                    </span>
-                {% endif %}
-                    {% for account in accounts %}
-                        <div class="d-flex">
-                            <div class="w-75 overflow-hidden">
-
-                                    <h5>{{ account.name }} - {{ account.bank }}</h5>
-                                    <span><p>Solde : {{ account.balance }}€</p></span>
-
-                            </div>
-                            <div class="w-25 overflow-hidden d-flex align-items-center flex-row-reverse">
-                                <a href="{{ path('app_account', {'id': account.id}) }}"><i class="bi bi-caret-right"></i></a>
-                            </div>
-                        </div>
-
-                    {% endfor %}
-            </div>
-        </div>
-        <div class="col-lg-7 h-100">
-            <div class="bg-white rounded-5 h-100 p-3 mb-4">
+            {% elseif accounts|length > 1 %}
                 <span class="d-flex justify-content-between align-items-center">
-                    <h3>Votre budget</h3>
-                    <a><i class="bi bi-gear"></i></a>
+                    <h3>Mes comptes bancaires</h3>
+                    <a href="{{ path('app_account_add') }}"><i class="bi bi-plus-circle"></i></a>
                 </span>
-            </div>
+            {% else %}
+                <span class="d-flex justify-content-between align-items-center">
+                    <h3>Votre compte bancaire</h3>
+                    <a href="{{ path('app_account_add') }}"><i class="bi bi-plus-circle"></i></a>
+                </span>
+            {% endif %}
+                {% for account in accounts %}
+                    <div class="d-flex">
+                        <div class="w-75 overflow-hidden">
+                            <h5>{{ account.name }} - {{ account.bank }}</h5>
+                            <span><p>Solde : {{ account.balance }}€</p></span>
+                        </div>
+                        <div class="w-25 d-flex align-items-center flex-row-reverse">
+                            <a href="{{ path('app_account', {'id': account.id}) }}"><i class="bi bi-caret-right"></i></a>
+                        </div>
+                    </div>
+
+                {% endfor %}
+        </div>
+        <div class="col-lg-7 bg-white rounded-5 p-3 mb-4 h-100 shadow-lg">
+            <span class="d-flex justify-content-between align-items-center">
+                <h3>Mon budget</h3>
+                <a><i class="bi bi-gear"></i></a>
+            </span>
         </div>
     </div>
 
