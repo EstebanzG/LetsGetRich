@@ -34,24 +34,71 @@
                     <a href="{{ path('app_account_add') }}"><i class="bi bi-plus-circle"></i></a>
                 </span>
             {% endif %}
-                {% for account in accounts %}
-                    <div class="d-flex">
-                        <div class="w-75 overflow-hidden">
-                            <h5>{{ account.name }} - {{ account.bank }}</h5>
-                            <span><p>Solde : {{ account.balance }}€</p></span>
-                        </div>
-                        <div class="w-25 d-flex align-items-center flex-row-reverse">
-                            <a href="{{ path('app_account', {'id': account.id}) }}"><i class="bi bi-caret-right"></i></a>
-                        </div>
+            {% for account in accounts %}
+                <div class="d-flex">
+                    <div class="w-75 overflow-hidden">
+                        <h5>{{ account.name }} - {{ account.bank }}</h5>
+                        <span><p>Solde : {{ account.balance }}€</p></span>
                     </div>
+                    <div class="w-25 d-flex align-items-center flex-row-reverse">
+                        <a href="{{ path('app_account', {'id': account.id}) }}"><i class="bi bi-caret-right"></i></a>
+                    </div>
+                </div>
 
-                {% endfor %}
+            {% endfor %}
         </div>
-        <div class="col-lg-7 bg-white rounded-5 p-3 mb-4 h-100 shadow-lg">
-            <span class="d-flex justify-content-between align-items-center">
+        <div class="col-lg-7 bg-white rounded-5 p-3 mb-4 h-100 shadow-lg overflow-scroll overflow-x-hidden">
+            <span class="d-flex justify-content-between align-items-center mb-2">
                 <h3>Mon budget</h3>
-                <a><i class="bi bi-gear"></i></a>
             </span>
+            <span class="d-flex justify-content-around">
+                <a href="{{ path('app_home_month', {'month': "back"}) }}"><i class="bi bi-arrow-left-circle"></i></a>
+                <h6>Dépenses du mois de {{ date|format_datetime(locale='fr',pattern="MMMM YYYY") }}</h6>
+                <a href="{{ path('app_home_month', {'month': "next"}) }}"><i class="bi bi-arrow-right-circle"></i></a>
+            </span>
+            <div>
+            {% for account in accounts %}
+                <div class="mt-4 border-bottom">
+                    <span class="d-flex justify-content-between">
+                        <h5>Budget de {{ account.name }} - {{ account.bank }}</h5>
+                        <a href="{{ path('app_budget_add', {'id': account.id}) }}"><i class="bi bi-plus-circle"></i></a>
+                    </span>
+                    {% for budg in account.budgets %}
+                        <div class="border-bottom mt-2">
+                            <span class="d-flex justify-content-between">
+                                <h6>{{ budg.category }}</h6>
+                                <a href="{{ path('app_budget', {'id': budg.id}) }}"><i class="bi bi-search"></i></a>
+                            </span>
+                            <div class="">
+                                {% if budg.getAmount(date) >= 0 %}
+                                    <p>Gain : {{ budg.getAmount(date)|abs }} €</p>
+                                {% else %}
+                                    <p>Perte : {{ budg.getAmount(date)|abs }} €</p>
+                                {% endif %}
+                                {% if budg.getLimitAmount > 0 %}
+                                    <p>Budget : {{ budg.getLimitAmount }} €</p>
+                                {% endif %}
+                                {% if budg.getAmount(date)|abs < budg.getLimitAmount %}
+                                    <p>Reste : {{ budg.getLimitAmount - budg.getAmount(date)|abs }} €</p>
+                                {% endif %}
+                            </div>
+                            {% if budg.getLimitAmount != 0 %}
+                                {% set percentageOfBudget = (budg.getAmount(date)|abs * 100 / budg.getLimitAmount)|round %}
+                                <div class="progress mb-3">
+                                    <div class="progress-bar"
+                                         style="width: {{ percentageOfBudget }}%"
+                                         role="progressbar" aria-valuenow="{{ percentageOfBudget }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ percentageOfBudget }}%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
         </div>
     </div>
 

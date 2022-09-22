@@ -57,8 +57,16 @@ class Budget
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getAmount($date = null): ?float
     {
+        if($date != null){
+            $expenses = $this->getExpenses($date);
+            $amount = 0;
+            foreach ($expenses as $expense){
+                $amount += $expense->getAmount();
+            }
+            return $amount;
+        }
         return $this->Amount;
     }
 
@@ -93,12 +101,54 @@ class Budget
         return $this;
     }
 
-    /**
-     * @return Collection<int, Expense>
-     */
-    public function getExpenses(): Collection
+    public function getExpenses($date = null): array
     {
-        return $this->Expenses;
+        if($date != null){
+            $expenses = $this->getExpenses();
+            $toReturn = [];
+            foreach ($expenses as $expense) {
+                $toReturn[] = $expense;
+            }
+            if($date != null){
+                $toReturn = array_filter($toReturn,
+                    function($expense) use ($date) {
+                        return $expense->getDate()->format('m Y') == $date->format("m Y");
+                    });
+            }
+
+            usort($toReturn,
+                function ($a, $b) {
+                    return ($b->getDate() > $a->getDate());
+                });
+
+            return $toReturn;
+        }
+        return $this->Expenses->toArray();
+    }
+
+    public function getExpensesSince($date):array
+    {
+        $expenses = $this->getExpenses();
+        $toReturn = [];
+        foreach ($expenses as $expense) {
+            $toReturn[] = $expense;
+        }
+        $toReturn = array_filter($toReturn,
+            function($expense) use ($date) {
+                return $expense->getDate() > $date;
+            });
+
+        return $toReturn;
+    }
+
+    public function getBalanceSince($date):int
+    {
+        $expenses = $this->getExpensesSince($date);
+        $toReturn = 0;
+        foreach ($expenses as $expense){
+            $toReturn += $expense->getAmount();
+        }
+        return $toReturn;
     }
 
     public function addExpense(Expense $expense): self

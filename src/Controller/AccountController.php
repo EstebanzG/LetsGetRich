@@ -59,7 +59,7 @@ class AccountController extends AbstractController
         foreach ($account->getBudgets() as $budg){
             $budgets[] = $budg;
         }
-        $form = $this->createForm(NewExpenseType::class,$expense, array('budgets' => $budgets));
+        $form = $this->createForm(NewExpenseType::class, $expense, array('budgets' => $budgets));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -80,10 +80,10 @@ class AccountController extends AbstractController
         }
 
 
-        $date = $session->get('date');
+        $date = $session->get('date_account', false);
         if(!$date){
             $date = new \DateTime("now");
-            $session->set('date', $date);
+            $session->set('date_account', $date);
         }
 
 
